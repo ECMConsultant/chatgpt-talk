@@ -1,33 +1,28 @@
 from flask import Flask, request, jsonify
-import openai
 import os
 
 app = Flask(__name__)
 
-# Optional: You can configure this via Render environment variables instead
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
 @app.route("/", methods=["GET"])
 def index():
-    return "ChatGPT Relay Server is running!"
+    return "AI Relay Server is live!"
 
 @app.route("/relay", methods=["POST"])
 def relay():
     data = request.json
-    if not data or "message" not in data:
+
+    # Extract fields
+    target_ai = data.get("target_ai", "another AI")
+    message = data.get("message")
+
+    if not message:
         return jsonify({"error": "Missing 'message' in request"}), 400
 
-    user_message = data["message"]
+    # Simulated response logic (for now)
+    reply = f"{target_ai} says: 'Sure, here's my take: {message[::-1]}'"
 
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # or "gpt-4"
-            messages=[{"role": "user", "content": user_message}]
-        )
-        reply = response['choices'][0]['message']['content']
-        return jsonify({"response": reply})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify({"response": reply})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # use PORT fro
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
