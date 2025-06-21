@@ -1,2 +1,1 @@
-# chatgpt-talk
-hi
+dont use this you die
